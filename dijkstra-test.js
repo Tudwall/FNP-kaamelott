@@ -52,6 +52,7 @@ function dijkstra(graph, source) {
 	return { distances, prev };
 }
 
+//Ne pas remettre de chemin vers le point de départ, et laisser le point d'arrivée vide.
 const graph = {
 	adjacencyList: {
 		A: [
