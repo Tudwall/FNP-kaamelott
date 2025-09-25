@@ -27,6 +27,7 @@ function dijkstra(
 			}
 		}
 	}
+	console.log(distances);
 	return path;
 }
 
@@ -34,7 +35,7 @@ const graph = {
 	A: { B: 1, C: 2 },
 	B: { A: 1, C: 2, D: 2, E: 3 },
 	C: { A: 2, B: 2, D: 1 },
-	D: { B: 2, C: 1, E: 3, F: 4 },
+	D: { B: 2, C: 1, E: 3, F: 4, G: 1 },
 	E: { B: 3, D: 3, G: 3 },
 	F: { D: 4, G: 1 },
 	G: { E: 3, F: 1 },
