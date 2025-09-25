@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royaume | Kaamelott</title>
+    <link rel="stylesheet" href="./public/assets/style/main.css" />
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <main>
+      <div class="kingdom">
+        <div class="kingdom__header">
+          <h2>Le royaume</h2>
+        </div>
+        <div class="kingdom__content">
+          <%- include('../partials/map-grid') %>
+          <img
+            src="./public/assets/img/map.png"
+            alt="Carte du royaume de Kaamelott"
+          />
+        </div>
+        <div class="kingdom__action">
+          <button class="btn-primary">Jouer</button>
+        </div>
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
