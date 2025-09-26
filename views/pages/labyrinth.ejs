@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royaume | Kaamelott</title>
+    <link rel="stylesheet" href="./public/assets/style/main.css" />
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <main>
+      <div class="labyrinth">
+        <div class="labyrinth__header">
+          <h2>Le labyrinthe</h2>
+          <div class="legend-item">
+            <div class="legend entrance"></div>
+            <p>Entrée</p>
+          </div>
+          <div class="legend-item">
+            <div class="legend treasure"></div>
+            <p>Trésor</p>
+          </div>
+          <div class="legend-item">
+            <div class="legend exit"></div>
+            <p>Sortie</p>
+          </div>
+        </div>
+        <div class="labyrinth__content"><%- include('../partials/maze') %></div>
+        <div class="labyrinth__action">
+          <button class="btn-primary">Jouer</button>
+        </div>
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>

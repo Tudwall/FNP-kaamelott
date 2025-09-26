@@ -21,7 +21,10 @@ app.get("/", (req, res) => {
   res.render("pages/index"); // render the "index" view
 });
 app.get("/kingdom", (req, res) => {
-  res.render("pages/kingdom");
+  res.render("pages/kingdom"); // render the "kingdom" view
+});
+app.get("/labyrinth", (req, res) => {
+  res.render("pages/labyrinth"); // render the "labyrinth" view
 });
 
 const PORT = process.env.PORT || 3000;
