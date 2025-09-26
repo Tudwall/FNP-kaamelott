@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royaume | Kaamelott</title>
+    <link rel="stylesheet" href="./public/assets/style/main.css" />
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <!-- Charger le script A* compilé -->
+    <script src="/public/assets/js/AStar.js"></script>
+    <main>
+      <div class="labyrinth">
+        <div class="labyrinth__header">
+          <h2>Le labyrinthe</h2>
+          <div class="legend-item">
+            <div class="legend entrance"></div>
+            <p>Entrée</p>
+          </div>
+          <div class="legend-item">
+            <div class="legend treasure"></div>
+            <p>Trésor</p>
+          </div>
+          <div class="legend-item">
+            <div class="legend exit"></div>
+            <p>Sortie</p>
+          </div>
+        </div>
+        <div class="labyrinth__content"><%- include('../partials/maze') %></div>
+        <div class="labyrinth__action">
+          <button class="btn-primary">Jouer</button>
+        </div>
+      </div>
+
+      <!-- Panneau de contrôles du labyrinthe -->
+      <aside class="labyrinth-controls">
+        <h3>Contrôles</h3>
+        <div class="controls-section">
+          <h4>Chemins</h4>
+          <button id="path-entrance-treasure" class="btn-primary">Entrée → Trésor</button>
+          <button id="path-treasure-exit" class="btn-primary">Trésor → Sortie</button>
+          <button id="path-entrance-exit" class="btn-primary">Entrée → Sortie</button>
+        </div>
+        <div class="controls-section">
+          <h4>Labyrinthe</h4>
+          <button id="regenerate-maze" class="btn-secondary">Régénérer</button>
+          <button id="clear-paths" class="btn-secondary">Effacer chemins</button>
+        </div>
+      </aside>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>

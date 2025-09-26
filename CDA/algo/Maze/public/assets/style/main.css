@@ -1,0 +1,690 @@
+/**
+ * CONTENTS
+ *
+ * SETTINGS
+ * Global
+ *
+ * BASE
+ * Reset
+ * Typography
+ * Layout
+ *
+ * COMPONENTS
+ * Main
+ * Header
+ * Footer
+ * Buttons
+ *
+ * PAGES
+ * Index
+ * Kingdom
+ */
+
+/*------------------------------------*\
+  #SETTINGS
+\*------------------------------------*/
+/* ===== Global ===== */
+:root {
+  --main-color: white;
+  --secondary-color: 0, 0, 0; /* RGB black for opacity adjustments */
+  --entrance: #2196f3;
+  --treasure: #f44336;
+  --exit: #ff9800;
+}
+
+/*------------------------------------*\
+  #BASE
+\*------------------------------------*/
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+/* ===== Typography ===== */
+p,
+a {
+  font-size: 1rem;
+}
+
+/* ===== Layout ===== */
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/*------------------------------------*\
+  #COMPONENTS
+\*------------------------------------*/
+/* ===== Main ===== */
+main {
+  padding: 4rem;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+/* ===== Header ===== */
+/* ===== Header ===== */
+header {
+  width: 100%;
+  height: fit-content;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 0 2rem black;
+  padding: 1rem 4rem;
+
+  & img {
+    height: 4rem;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.7;
+    }
+  }
+
+  & nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & menu {
+      display: flex;
+      gap: 4rem;
+
+      & li {
+        list-style: none;
+      }
+    }
+  }
+
+  & .link {
+    color: var(--secondary-color);
+    text-decoration: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+/* ===== Footer ===== */
+footer {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  & img {
+    width: 2rem;
+  }
+
+  & p {
+    font-size: 14px;
+  }
+}
+
+/* ===== Buttons ===== */
+button {
+  background-color: rgb(var(--secondary-color));
+  color: var(--main-color);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  width: fit-content;
+  border: none;
+
+  & a {
+    color: var(--main-color);
+    text-decoration: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+
+/*------------------------------------*\
+  #PAGES
+\*------------------------------------*/
+/* ===== Index ===== */
+.index {
+  margin: auto;
+  max-width: 1400px;
+  box-shadow: 0 0 2rem rgba(var(--secondary-color), 1);
+  border-radius: 2rem;
+  overflow: hidden;
+  display: flex;
+
+  & img {
+    width: 25%;
+  }
+
+  & > div {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    & p {
+      max-width: 700px;
+      height: 100%;
+    }
+  }
+}
+
+/* ===== Kingdom ===== */
+.kingdom {
+  margin: auto;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0 2rem rgba(var(--secondary-color), 1);
+  margin-left: 0;
+
+  & .kingdom__header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  & .kingdom__content {
+    position: relative;
+
+    & img {
+      width: 1088px;
+      height: 736px;
+      position: absolute;
+      top: 19px; /* 1% de 1920px (hauteur écran standard) ≈ 19px, ajusté pour la carte */
+      left: 48px;
+      z-index: 1;
+    }
+  }
+
+  & .kingdom__action {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.kingdom__axes {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: #444;
+  margin-left: 0.5rem;
+}
+
+.kingdom__axes .axis-x {
+  margin-bottom: 0.15rem;
+}
+
+/* Bloc UI à gauche du bloc kingdom */
+.kingdom-ui {
+  min-width: 220px;
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  background: rgba(255,255,255,0.95);
+  padding: 2rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 1rem rgba(0,0,0,0.1);
+  align-items: stretch; /* étirer les éléments pour une meilleure apparence */
+  padding: 1.5rem;
+}
+
+.kingdom-ui__header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.kingdom-ui__hint {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.kingdom-ui__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Surligner légèrement les fieldsets pour une meilleure lisibilité */
+.kingdom-ui__block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0.75rem;
+  border-radius: 0.6rem;
+  background: #fff;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  width: 100%;
+}
+
+.input-row label {
+  width: 36px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Rendre les inputs larges et lisibles, responsive à la largeur du bloc */
+.input-row input[type="number"] {
+  flex: 1;
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #bbb;
+  background: #fafafa;
+}
+
+.kingdom-ui__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin-top: 0.25rem;
+}
+
+/* Boutons : primary déjà global ; ajout d'un secondaire local */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #aaa;
+  color: #222;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+}
+
+/* Petite amélioration visuelle pour focus (accessibilité) */
+.input-row input[type="number"]:focus,
+.btn-primary:focus,
+.btn-secondary:focus {
+  outline: 3px solid rgba(34, 34, 34, 0.12);
+  outline-offset: 2px;
+}
+
+.kingdom-ui label {
+  font-size: 1rem;
+  margin-right: 0.3rem;
+}
+
+.kingdom-ui input[type="number"] {
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  border: 1px solid #aaa;
+  padding: 4px 10px;
+  margin-right: 0.5rem;
+  width: 160px; 
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.kingdom-ui h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Bloc des résultats du chemin */
+.kingdom-ui__results {
+  background: rgba(249, 250, 251, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.6rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.kingdom-ui__results h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-label {
+  font-size: 0.9rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.result-value {
+  font-size: 1rem;
+  color: #1F2937;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Conteneur wrapper pour les en-têtes et la carte */
+.map-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+
+/* En-têtes de colonnes au-dessus */
+.map-grid__col-headers {
+  display: grid;
+  grid-template-columns: repeat(34, 1fr);
+  width: 1088px;
+  margin-left: 48px;
+  margin-bottom: 4px;
+  gap: 2px;
+}
+
+.map-grid__col-header {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #333;
+  font-weight: bold;
+  padding: 2px 0;
+}
+
+/* Conteneur pour les en-têtes de lignes et la carte */
+.map-content {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* En-têtes de lignes à gauche */
+.map-grid__row-headers {
+  display: grid;
+  grid-template-rows: repeat(23, 1fr);
+  width: 40px;
+  height: 736px;
+  margin-right: 8px;
+  gap: 2px;
+}
+
+.map-grid__row-header {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #333;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+.map-grid {
+  width: 1088px;
+  height: 736px;
+  padding: 2px;
+  position: relative;
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+
+  & .map-grid__cell {
+    width: 100%;
+    height: 100%;
+    color: rgba(var(--secondary-color), 0.75);
+    background-color: rgba(var(--secondary-color), 0.1);
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem;
+  }
+
+  & .map-grid__cell.start {
+    position: relative;
+  }
+
+  & .map-grid__cell.start::before {
+    content: "🏰";
+    font-size: 1.2rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  & .map-grid__cell.end {
+    position: relative;
+  }
+
+  & .map-grid__cell.end::before {
+    content: "🎯";
+    font-size: 1.2rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  & .map-grid__cell.path {
+    background: linear-gradient(135deg, rgba(0,200,255,0.9), rgba(0,120,255,0.9));
+    color: #fff;
+    font-weight: 700;
+    border: 2px solid rgba(0,100,255,0.8);
+    box-shadow: 0 0 10px rgba(0,150,255,0.7);
+    animation: pathPulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pathPulse {
+    from { 
+      box-shadow: 0 0 10px rgba(0,150,255,0.7);
+      transform: scale(1);
+    }
+    to { 
+      box-shadow: 0 0 15px rgba(0,180,255,0.9);
+      transform: scale(1.02);
+    }
+  }
+}
+
+/* ===== Labyrinth ===== */
+.labyrinth {
+  margin: auto;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0 2rem rgba(var(--secondary-color), 1);
+
+  & .labyrinth__header {
+    padding: 1rem;
+
+    & .legend-item {
+      display: flex;
+      gap: 0.5rem;
+
+      & .legend {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 0.5rem;
+      }
+
+      & .entrance {
+        background-color: var(--entrance);
+      }
+
+      & .treasure {
+        background-color: var(--treasure);
+      }
+
+      & .exit {
+        background-color: var(--exit);
+      }
+    }
+  }
+
+  & .labyrinth__content {
+    position: relative;
+
+    & img {
+      width: 1088px;
+      height: 736px;
+    }
+  }
+
+  & .labyrinth__action {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* ===== Labyrinth Controls ===== */
+.labyrinth-controls {
+  min-width: 220px;
+  max-width: 280px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: rgba(255,255,255,0.95);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 1rem rgba(0,0,0,0.1);
+}
+
+.labyrinth-controls h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controls-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6B7280;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.25rem;
+}
+
+.controls-section button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.controls-section .btn-primary {
+  background: #3B82F6;
+  color: white;
+}
+
+.controls-section .btn-primary:hover {
+  background: #2563EB;
+  transform: translateY(-1px);
+}
+
+.controls-section .btn-secondary {
+  background: #F3F4F6;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+}
+
+.controls-section .btn-secondary:hover {
+  background: #E5E7EB;
+  transform: translateY(-1px);
+}
+
+/* Maze */
+#maze {
+  display: inline-block;
+  background-color: var(--main-color);
+
+  /* Labyrinth's rows */
+  & > div {
+    display: flex;
+    height: 1.5rem;
+
+    /* Cells */
+    & > div {
+      width: 1.5rem;
+      height: 1.5rem;
+      background-color: rgba(var(--secondary-color), 0.1);
+      border-radius: 0.5rem;
+    }
+
+    /* Walls */
+    & > div.wall {
+      background-color: black;
+      border-radius: unset;
+    }
+
+    & > div.treasure {
+      background-color: var(--treasure);
+      border-radius: 50%;
+    }
+
+    & > div.entrance {
+      background-color: var(--entrance);
+      border-radius: 50%;
+    }
+
+    & > div.exit {
+      background-color: var(--exit);
+      border-radius: 50%;
+    }
+  }
+}
+
+/* Maze path styles */
+#maze > div > div.path1 {
+  background-color: #4fbbff !important;
+  box-shadow: 0 0 8px #4fbbff;
+}
+#maze > div > div.path2 {
+  background-color: #ffb84f !important;
+  box-shadow: 0 0 8px #ffb84f;
+}
+#maze > div > div.path3 {
+  background-color: #ff4f8b !important;
+  box-shadow: 0 0 8px #ff4f8b;
+}

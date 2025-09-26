@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaamelott</title>
+    <link rel="stylesheet" href="./public/assets/style/main.css" />
+    <link rel="stylesheet" href="./public/assets/style/grid.css" />
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <main>
+      <div class="index">
+        <img src="./public/assets/img/dame_du_lac.webp" alt="Dame du lac" />
+        <div>
+          <h2>La mission</h2>
+          <p>
+            Le roi Arthur s'est vu confier une quête par la Dame du Lac.
+            Celle-ci lui a révélé l'existence d'un trésor inestimable caché dans
+            un labyrinthe mystérieux. Pour parvenir à ce trésor, Arthur doit
+            d'abord trouver l'entrée du labyrinthe, qui est bien dissimulée
+            quelque part dans le royaume de Kaamelott.
+          </p>
+          <button class="btn-primary"><a href="/kingdom">Jouer</a></button>
+        </div>
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>

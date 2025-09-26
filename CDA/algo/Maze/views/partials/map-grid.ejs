@@ -1,0 +1,1096 @@
+<div class="map-wrapper">
+  <div class="map-grid__col-headers"></div>
+  <div class="map-content">
+    <div class="map-grid__row-headers"></div>
+    <div class="map-grid"></div>
+  </div>
+</div>
+
+<!-- Charger le script A* compilé depuis votre AStar.ts -->
+<script src="/public/assets/js/AStar.js"></script>
+
+<script>
+  /**
+   * Generates a grid of cells with the specified number of rows and columns.
+   * Each cell is assigned a unique ID and a default weight.
+   * @param {number} rows - Number of rows in the grid.
+   * @param {number} cols - Number of columns in the grid.
+   */
+  function generateGrid(rows, cols) {
+    const gridContainer = document.querySelector(".map-grid");
+    gridContainer.style.display = "grid";
+    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+    for (let y = 1; y <= rows; y++) {
+      for (let x = 1; x <= cols; x++) {
+        const cellId = `${y}-${x}`;
+        const cell = document.createElement("div");
+        cell.id = cellId;
+        cell.className = "map-grid__cell";
+        // Ajout des classes 'start' et 'end' pour les cases spéciales
+        if (cellId === "10-19") {
+          cell.classList.add("start");
+        }
+        if (cellId === "21-8") {
+          cell.classList.add("end");
+        }
+        // Ne pas afficher la pondération, juste la stocker
+        let weight = gridWeights[cellId];
+        cell.textContent = ''; // Masquer la pondération
+        cell.dataset.weight = (weight === undefined ? "1" : weight);
+        gridContainer.appendChild(cell);
+      }
+    }
+  }
+
+  /**
+   * Applies custom weights to cells in the grid.
+   * @param {Object} weights - Object mapping cell IDs to their weights.
+   */
+  function applyWeights(weights) {
+    for (const [cellId, weight] of Object.entries(weights)) {
+      const cell = document.getElementById(cellId);
+      if (cell) {
+        cell.dataset.weight = weight;
+      }
+    }
+  }
+
+  // Grid dimensions
+  const GRID_ROWS = 23;
+  const GRID_COLS = 34;
+
+  // Weights of cells (0 = easy, 1 = hard)
+  const gridWeights = {
+    // Row 1
+  "1-1": 1,
+  "1-2": 1,
+  "1-3": 1,
+  "1-4": 1,
+  "1-5": 1,
+  "1-6": 5,
+  "1-7": 1,
+  "1-8": 1,
+  "1-9": 1,
+  "1-10": 1,
+  "1-11": 2,
+  "1-12": 2,
+  "1-13": 1,
+  "1-14": 1,
+  "1-15": 1,
+  "1-16": 1,
+  "1-17": 1,
+  "1-18": 1,
+  "1-19": 1,
+  "1-20": 1,
+  "1-21": 6,
+  "1-22": 6,
+  "1-23": 9,
+  "1-24": 9,
+  "1-25": 5,
+  "1-26": 1,
+  "1-27": 1,
+  "1-28": 1,
+  "1-29": 5,
+  "1-30": 5,
+  "1-31": 1,
+  "1-32": 1,
+  "1-33": 1,
+  "1-34": 1,
+  "2-1": 1,
+  "2-2": 1,
+  "2-3": 1,
+  "2-4": 5,
+  "2-5": 1,
+  "2-6": 0,
+  "2-7": 0,
+  "2-8": 0,
+  "2-9": 0,
+  "2-10": 5,
+  "2-11": 2,
+  "2-12": 2,
+  "2-13": 1,
+  "2-14": 1,
+  "2-15": 1,
+  "2-16": 1,
+  "2-17": 1,
+  "2-18": 1,
+  "2-19": 1,
+  "2-20": 1,
+  "2-21": 6,
+  "2-22": 6,
+  "2-23": 1,
+  "2-24": 1,
+  "2-25": 1,
+  "2-26": 5,
+  "2-27": 5,
+  "2-28": 1,
+  "2-29": 5,
+  "2-30": 1,
+  "2-31": 1,
+  "2-32": 1,
+  "2-33": 1,
+  "2-34": 1,
+  "3-1": 1,
+  "3-2": 1,
+  "3-3": 1,
+  "3-4": 5,
+  "3-5": 1,
+  "3-6": 0,
+  "3-7": 0,
+  "3-8": 0,
+  "3-9": 0,
+  "3-10": 1,
+  "3-11": 5,
+  "3-12": 5,
+  "3-13": 5,
+  "3-14": 5,
+  "3-15": 5,
+  "3-16": 5,
+  "3-17": 5,
+  "3-18": 5,
+  "3-19": 5,
+  "3-20": 1,
+  "3-21": 1,
+  "3-22": 8,
+  "3-23": 8,
+  "3-24": 1,
+  "3-25": 1,
+  "3-26": 1,
+  "3-27": 1,
+  "3-28": 5,
+  "3-29": 1,
+  "3-30": 1,
+  "3-31": 1,
+  "3-32": 1,
+  "3-33": 5,
+  "3-34": 1,
+  "4-1": 1,
+  "4-2": 1,
+  "4-3": 1,
+  "4-4": 5,
+  "4-5": 5,
+  "4-6": 0,
+  "4-7": 0,
+  "4-8": 0,
+  "4-9": 0,
+  "4-10": 1,
+  "4-11": 1,
+  "4-12": 1,
+  "4-13": 1,
+  "4-14": 5,
+  "4-15": 1,
+  "4-16": 1,
+  "4-17": 1,
+  "4-18": 5,
+  "4-19": 3,
+  "4-20": 3,
+  "4-21": 5,
+  "4-22": 9,
+  "4-23": 9,
+  "4-24": 9,
+  "4-25": 1,
+  "4-26": 5,
+  "4-27": 5,
+  "4-28": 1,
+  "4-29": 1,
+  "4-30": 1,
+  "4-31": 5,
+  "4-32": 5,
+  "4-33": 1,
+  "4-34": 1,
+  "5-1": 1,
+  "5-2": 1,
+  "5-3": 1,
+  "5-4": 1,
+  "5-5": 5,
+  "5-6": 0,
+  "5-7": 0,
+  "5-8": 0,
+  "5-9": 0,
+  "5-10": 1,
+  "5-11": 1,
+  "5-12": 1,
+  "5-13": 5,
+  "5-14": 4,
+  "5-15": 4,
+  "5-16": 4,
+  "5-17": 1,
+  "5-18": 3,
+  "5-19": 3,
+  "5-20": 3,
+  "5-21": 3,
+  "5-22": 1,
+  "5-23": 5,
+  "5-24": 5,
+  "5-25": 5,
+  "5-26": 5,
+  "5-27": 5,
+  "5-28": 5,
+  "5-29": 5,
+  "5-30": 1,
+  "5-31": 1,
+  "5-32": 1,
+  "5-33": 1,
+  "5-34": 1,
+  "6-1": 1,
+  "6-2": 1,
+  "6-3": 1,
+  "6-4": 1,
+  "6-5": 5,
+  "6-6": 0,
+  "6-7": 0,
+  "6-8": 0,
+  "6-9": 0,
+  "6-10": 1,
+  "6-11": 5,
+  "6-12": 5,
+  "6-13": 3,
+  "6-14": 4,
+  "6-15": 4,
+  "6-16": 4,
+  "6-17": 3,
+  "6-18": 3,
+  "6-19": 3,
+  "6-20": 3,
+  "6-21": 3,
+  "6-22": 3,
+  "6-23": 1,
+  "6-24": 1,
+  "6-25": 3,
+  "6-26": 3,
+  "6-27": 1,
+  "6-28": 5,
+  "6-29": 1,
+  "6-30": 1,
+  "6-31": 1,
+  "6-32": 3,
+  "6-33": 1,
+  "6-34": 1,
+  "7-1": 1,
+  "7-2": 1,
+  "7-3": 1,
+  "7-4": 1,
+  "7-5": 3,
+  "7-6": 5,
+  "7-7": 5,
+  "7-8": 1,
+  "7-9": 1,
+  "7-10": 5,
+  "7-11": 1,
+  "7-12": 1,
+  "7-13": 3,
+  "7-14": 3,
+  "7-15": 4,
+  "7-16": 4,
+  "7-17": 1,
+  "7-18": 1,
+  "7-19": 1,
+  "7-20": 1,
+  "7-21": 3,
+  "7-22": 3,
+  "7-23": 9,
+  "7-24": 3,
+  "7-25": 3,
+  "7-26": 3,
+  "7-27": 1,
+  "7-28": 5,
+  "7-29": 1,
+  "7-30": 1,
+  "7-31": 1,
+  "7-32": 3,
+  "7-33": 1,
+  "7-34": 1,
+  "8-1": 1,
+  "8-2": 1,
+  "8-3": 1,
+  "8-4": 1,
+  "8-5": 3,
+  "8-6": 3,
+  "8-7": 7,
+  "8-8": 5,
+  "8-9": 1,
+  "8-10": 1,
+  "8-11": 1,
+  "8-12": 3,
+  "8-13": 3,
+  "8-14": 3,
+  "8-15": 1,
+  "8-16": 1,
+  "8-17": 1,
+  "8-18": 1,
+  "8-19": 1,
+  "8-20": 1,
+  "8-21": 1,
+  "8-22": 3,
+  "8-23": 9,
+  "8-24": 3,
+  "8-25": 1,
+  "8-26": 3,
+  "8-27": 1,
+  "8-28": 5,
+  "8-29": 1,
+  "8-30": 1,
+  "8-31": 3,
+  "8-32": 3,
+  "8-33": 5,
+  "8-34": 1,
+  "9-1": 1,
+  "9-2": 1,
+  "9-3": 1,
+  "9-4": 1,
+  "9-5": 3,
+  "9-6": 5,
+  "9-7": 7,
+  "9-8": 1,
+  "9-9": 1,
+  "9-10": 1,
+  "9-11": 1,
+  "9-12": 3,
+  "9-13": 3,
+  "9-14": 3,
+  "9-15": 1,
+  "9-16": 1,
+  "9-17": 2,
+  "9-18": 2,
+  "9-19": 2,
+  "9-20": 2,
+  "9-21": 1,
+  "9-22": 3,
+  "9-23": 9,
+  "9-24": 3,
+  "9-25": 3,
+  "9-26": 3,
+  "9-27": 1,
+  "9-28": 1,
+  "9-29": 5,
+  "9-30": 3,
+  "9-31": 3,
+  "9-32": 3,
+  "9-33": 5,
+  "9-34": 1,
+  "10-1": 1,
+  "10-2": 1,
+  "10-3": 1,
+  "10-4": 1,
+  "10-5": 3,
+  "10-6": 3,
+  "10-7": 1,
+  "10-8": 1,
+  "10-9": 1,
+  "10-10": 1,
+  "10-11": 9,
+  "10-12": 1,
+  "10-13": 3,
+  "10-14": 3,
+  "10-15": 1,
+  "10-16": 1,
+  "10-17": 0,
+  "10-18": 0,
+  "10-19": 0,
+  "10-20": 0,
+  "10-21": 1,
+  "10-22": 3,
+  "10-23": 9,
+  "10-24": 9,
+  "10-25": 3,
+  "10-26": 3,
+  "10-27": 1,
+  "10-28": 2,
+  "10-29": 2,
+  "10-30": 1,
+  "10-31": 3,
+  "10-32": 3,
+  "10-33": 5,
+  "10-34": 1,
+  "11-1": 3,
+  "11-2": 3,
+  "11-3": 5,
+  "11-4": 5,
+  "11-5": 9,
+  "11-6": 9,
+  "11-7": 9,
+  "11-8": 9,
+  "11-9": 5,
+  "11-10": 9,
+  "11-11": 9,
+  "11-12": 1,
+  "11-13": 1,
+  "11-14": 3,
+  "11-15": 3,
+  "11-16": 3,
+  "11-17": 1,
+  "11-18": 1,
+  "11-19": 1,
+  "11-20": 1,
+  "11-21": 3,
+  "11-22": 3,
+  "11-23": 9,
+  "11-24": 9,
+  "11-25": 3,
+  "11-26": 8,
+  "11-27": 1,
+  "11-28": 1,
+  "11-29": 2,
+  "11-30": 1,
+  "11-31": 3,
+  "11-32": 3,
+  "11-33": 5,
+  "11-34": 1,
+  "12-1": 3,
+  "12-2": 3,
+  "12-3": 1,
+  "12-4": 1,
+  "12-5": 5,
+  "12-6": 5,
+  "12-7": 5,
+  "12-8": 9,
+  "12-9": 9,
+  "12-10": 9,
+  "12-11": 9,
+  "12-12": 9,
+  "12-13": 9,
+  "12-14": 1,
+  "12-15": 3,
+  "12-16": 3,
+  "12-17": 3,
+  "12-18": 3,
+  "12-19": 3,
+  "12-20": 3,
+  "12-21": 3,
+  "12-22": 3,
+  "12-23": 1,
+  "12-24": 3,
+  "12-25": 3,
+  "12-26": 8,
+  "12-27": 1,
+  "12-28": 1,
+  "12-29": 5,
+  "12-30": 1,
+  "12-31": 5,
+  "12-32": 5,
+  "12-33": 5,
+  "12-34": 5,
+  "13-1": 1,
+  "13-2": 3,
+  "13-3": 1,
+  "13-4": 1,
+  "13-5": 1,
+  "13-6": 8,
+  "13-7": 8,
+  "13-8": 1,
+  "13-9": 1,
+  "13-10": 9,
+  "13-11": 9,
+  "13-12": 9,
+  "13-13": 9,
+  "13-14": 9,
+  "13-15": 1,
+  "13-16": 3,
+  "13-17": 3,
+  "13-18": 4,
+  "13-19": 4,
+  "13-20": 3,
+  "13-21": 5,
+  "13-22": 1,
+  "13-23": 1,
+  "13-24": 1,
+  "13-25": 1,
+  "13-26": 8,
+  "13-27": 1,
+  "13-28": 1,
+  "13-29": 5,
+  "13-30": 5,
+  "13-31": 1,
+  "13-32": 1,
+  "13-33": 1,
+  "13-34": 1,
+  "14-1": 1,
+  "14-2": 1,
+  "14-3": 7,
+  "14-4": 6,
+  "14-5": 7,
+  "14-6": 1,
+  "14-7": 8,
+  "14-8": 8,
+  "14-9": 8,
+  "14-10": 1,
+  "14-11": 1,
+  "14-12": 1,
+  "14-13": 5,
+  "14-14": 5,
+  "14-15": 1,
+  "14-16": 1,
+  "14-17": 1,
+  "14-18": 4,
+  "14-19": 4,
+  "14-20": 1,
+  "14-21": 1,
+  "14-22": 1,
+  "14-23": 8,
+  "14-24": 5,
+  "14-25": 1,
+  "14-26": 1,
+  "14-27": 8,
+  "14-28": 8,
+  "14-29": 5,
+  "14-30": 2,
+  "14-31": 2,
+  "14-32": 3,
+  "14-33": 1,
+  "14-34": 1,
+  "15-1": 1,
+  "15-2": 1,
+  "15-3": 1,
+  "15-4": 6,
+  "15-5": 7,
+  "15-6": 5,
+  "15-7": 8,
+  "15-8": 8,
+  "15-9": 8,
+  "15-10": 1,
+  "15-11": 1,
+  "15-12": 1,
+  "15-13": 1,
+  "15-14": 1,
+  "15-15": 1,
+  "15-16": 1,
+  "15-17": 1,
+  "15-18": 1,
+  "15-19": 1,
+  "15-20": 1,
+  "15-21": 8,
+  "15-22": 8,
+  "15-23": 1,
+  "15-24": 1,
+  "15-25": 5,
+  "15-26": 8,
+  "15-27": 8,
+  "15-28": 1,
+  "15-29": 2,
+  "15-30": 2,
+  "15-31": 2,
+  "15-32": 3,
+  "15-33": 3,
+  "15-34": 1,
+  "16-1": 10,
+  "16-2": 10,
+  "16-3": 1,
+  "16-4": 1,
+  "16-5": 5,
+  "16-6": 5,
+  "16-7": 1,
+  "16-8": 1,
+  "16-9": 1,
+  "16-10": 1,
+  "16-11": 1,
+  "16-12": 1,
+  "16-13": 1,
+  "16-14": 1,
+  "16-15": 3,
+  "16-16": 1,
+  "16-17": 1,
+  "16-18": 1,
+  "16-19": 1,
+  "16-20": 1,
+  "16-21": 1,
+  "16-22": 1,
+  "16-23": 1,
+  "16-24": 1,
+  "16-25": 1,
+  "16-26": 5,
+  "16-27": 1,
+  "16-28": 5,
+  "16-29": 5,
+  "16-30": 2,
+  "16-31": 3,
+  "16-32": 3,
+  "16-33": 3,
+  "16-34": 1,
+  "17-1": 10,
+  "17-2": 10,
+  "17-3": 10,
+  "17-4": 10,
+  "17-5": 5,
+  "17-6": 1,
+  "17-7": 1,
+  "17-8": 1,
+  "17-9": 1,
+  "17-10": 5,
+  "17-11": 1,
+  "17-12": 1,
+  "17-13": 1,
+  "17-14": 1,
+  "17-15": 3,
+  "17-16": 1,
+  "17-17": 9,
+  "17-18": 9,
+  "17-19": 9,
+  "17-20": 9,
+  "17-21": 9,
+  "17-22": 9,
+  "17-23": 9,
+  "17-24": 1,
+  "17-25": 1,
+  "17-26": 5,
+  "17-27": 1,
+  "17-28": 1,
+  "17-29": 1,
+  "17-30": 9,
+  "17-31": 9,
+  "17-32": 1,
+  "17-33": 1,
+  "17-34": 9,
+  "18-1": 10,
+  "18-2": 10,
+  "18-3": 10,
+  "18-4": 10,
+  "18-5": 10,
+  "18-6": 1,
+  "18-7": 9,
+  "18-8": 9,
+  "18-9": 5,
+  "18-10": 5,
+  "18-11": 5,
+  "18-12": 7,
+  "18-13": 1,
+  "18-14": 1,
+  "18-15": 1,
+  "18-16": 1,
+  "18-17": 1,
+  "18-18": 5,
+  "18-19": 5,
+  "18-20": 1,
+  "18-21": 1,
+  "18-22": 1,
+  "18-23": 1,
+  "18-24": 1,
+  "18-25": 1,
+  "18-26": 1,
+  "18-27": 5,
+  "18-28": 1,
+  "18-29": 1,
+  "18-30": 1,
+  "18-31": 9,
+  "18-32": 9,
+  "18-33": 9,
+  "18-34": 9,
+  "19-1": 10,
+  "19-2": 10,
+  "19-3": 10,
+  "19-4": 10,
+  "19-5": 10,
+  "19-6": 10,
+  "19-7": 5,
+  "19-8": 1,
+  "19-9": 1,
+  "19-10": 1,
+  "19-11": 1,
+  "19-12": 7,
+  "19-13": 7,
+  "19-14": 5,
+  "19-15": 5,
+  "19-16": 5,
+  "19-17": 5,
+  "19-18": 5,
+  "19-19": 1,
+  "19-20": 1,
+  "19-21": 1,
+  "19-22": 1,
+  "19-23": 3,
+  "19-24": 3,
+  "19-25": 3,
+  "19-26": 3,
+  "19-27": 3,
+  "19-28": 5,
+  "19-29": 5,
+  "19-30": 1,
+  "19-31": 9,
+  "19-32": 9,
+  "19-33": 9,
+  "19-34": 5,
+  "20-1": 10,
+  "20-2": 10,
+  "20-3": 10,
+  "20-4": 10,
+  "20-5": 10,
+  "20-6": 10,
+  "20-7": 0,
+  "20-8": 1,
+  "20-9": 1,
+  "20-10": 1,
+  "20-11": 1,
+  "20-12": 1,
+  "20-13": 1,
+  "20-14": 3,
+  "20-15": 3,
+  "20-16": 3,
+  "20-17": 3,
+  "20-18": 1,
+  "20-19": 1,
+  "20-20": 5,
+  "20-21": 1,
+  "20-22": 1,
+  "20-23": 3,
+  "20-24": 3,
+  "20-25": 6,
+  "20-26": 6,
+  "20-27": 3,
+  "20-28": 1,
+  "20-29": 1,
+  "20-30": 5,
+  "20-31": 1,
+  "20-32": 1,
+  "20-33": 1,
+  "20-34": 5,
+  "21-1": 10,
+  "21-2": 2,
+  "21-3": 1,
+  "21-4": 1,
+  "21-5": 10,
+  "21-6": 10,
+  "21-7": 1,
+  "21-8": 0,
+  "21-10": 1,
+  "21-11": 1,
+  "21-12": 1,
+  "21-13": 1,
+  "21-14": 3,
+  "21-15": 3,
+  "21-16": 3,
+  "21-17": 3,
+  "21-18": 1,
+  "21-19": 1,
+  "21-20": 1,
+  "21-21": 1,
+  "21-22": 1,
+  "21-23": 1,
+  "21-24": 1,
+  "21-25": 3,
+  "21-26": 3,
+  "21-27": 1,
+  "21-28": 1,
+  "21-29": 1,
+  "21-30": 1,
+  "21-31": 5,
+  "21-32": 5,
+  "21-33": 1,
+  "21-34": 1,
+  "22-1": 10,
+  "22-2": 2,
+  "22-3": 1,
+  "22-4": 1,
+  "22-5": 1,
+  "22-6": 1,
+  "22-7": 1,
+  "22-8": 1,
+  "22-9": 1,
+  "22-10": 1,
+  "22-11": 3,
+  "22-12": 3,
+  "22-13": 6,
+  "22-14": 1,
+  "22-15": 7,
+  "22-16": 3,
+  "22-17": 3,
+  "22-18": 3,
+  "22-19": 1,
+  "22-20": 1,
+  "22-21": 1,
+  "22-22": 5,
+  "22-23": 1,
+  "22-24": 1,
+  "22-25": 1,
+  "22-26": 1,
+  "22-27": 1,
+  "22-28": 1,
+  "22-29": 1,
+  "22-30": 1,
+  "22-31": 1,
+  "22-32": 1,
+  "22-33": 5,
+  "22-34": 1,
+  "23-1": 10,
+  "23-2": 1,
+  "23-3": 1,
+  "23-4": 1,
+  "23-5": 1,
+  "23-6": 1,
+  "23-7": 1,
+  "23-8": 1,
+  "23-9": 1,
+  "23-10": 1,
+  "23-11": 3,
+  "23-12": 1,
+  "23-13": 6,
+  "23-14": 5,
+  "23-15": 1,
+  "23-16": 1,
+  "23-17": 1,
+  "23-18": 1,
+  "23-19": 1,
+  "23-20": 1,
+  "23-21": 1,
+  "23-22": 1,
+  "23-23": 1,
+  "23-24": 1,
+  "23-25": 1,
+  "23-26": 1,
+  "23-27": 1,
+  "23-28": 1,
+  "23-29": 1,
+  "23-30": 1,
+  "23-31": 1,
+  "23-32": 1,
+  "23-33": 1,
+  "23-34": 1
+}
+  //pondération : de 0 à 10 
+  //0 = chemin de terre/village/chateaux/forteresse
+  //1 = plaine/colinnes
+  //2 = foret clairsemée
+  //3 = foret dense
+  //4 = ruines
+  //5 = rivière/ruisseau 
+  //6 = marais
+  //8 = lac
+  //9 = montagne
+  //10 = montagne escarpée
+  //NULL = impassable (eau profonde, falaise, volcan, etc)
+  // Special places on the grid
+  const places = {
+    "2-12": "The fortress of Fdirsholas",
+    "2-21": "Ruined Castle",
+    "3-23": "The Vale of Denaria",
+    "4-14": "Resting Place of Gorlois",
+    "4-24": "Mountains of Andor",
+    "8-25": "Forest of Ascetir",
+    "10-19": "City of Kaamelott", // Start place
+    "11-29": "Eatoor",
+    "14-26": "Ridge of Ascetir",
+    "15-4": "The Iste of the Blessed",
+    "15-30": "Engerd",
+    "18-33": "Caves",
+    "19-32": "The feorre Mountains",
+    "20-7": "Labyrinth of Gedref", // End place
+    "20-25": "Forest of Balow and caves",
+    "22-2": "Odin's Castle",
+    "23-13": "Ruined castle",
+  };
+
+  // Expose places for other scripts (kingdom UI) to use
+  window.places = window.places || places;
+
+  // Initialize the grid
+  generateGrid(GRID_ROWS, GRID_COLS);
+  applyWeights(gridWeights);
+
+  // Ajout des en-têtes de colonnes
+  const colHeaders = document.querySelector('.map-grid__col-headers');
+  for (let x = 1; x <= GRID_COLS; x++) {
+    const colHeader = document.createElement('div');
+    colHeader.className = 'map-grid__col-header';
+    colHeader.textContent = x;
+    colHeaders.appendChild(colHeader);
+  }
+
+  // Ajout des en-têtes de lignes
+  const rowHeaders = document.querySelector('.map-grid__row-headers');
+  for (let y = 1; y <= GRID_ROWS; y++) {
+    const rowHeader = document.createElement('div');
+    rowHeader.className = 'map-grid__row-header';
+    rowHeader.textContent = y;
+    rowHeaders.appendChild(rowHeader);
+  }
+
+  // --- New: handle start/end designation from inputs ---
+  function restoreCellDisplay(cell) {
+    if (!cell) return;
+    const id = cell.id;
+    // restore dataset.weight from gridWeights or default, but do NOT display it in textContent
+    const original = gridWeights[id];
+    if (original === undefined || original === null) {
+      cell.dataset.weight = '';
+    } else {
+      cell.dataset.weight = original;
+    }
+    // keep visual weight hidden
+    cell.textContent = '';
+    // remove any marker/path classes so the cell returns to its normal appearance
+    cell.classList.remove('start', 'end', 'path');
+    cell.style.color = ''; 
+    cell.style.fontWeight = ''; 
+  }
+
+  function markAsStart(cell) {
+    if (!cell) return;
+    cell.dataset.weight = 0;
+    cell.textContent = ''; 
+    cell.classList.add('start');
+
+    cell.style.color = '';
+    cell.style.fontWeight = '';
+  }
+
+  function markAsEnd(cell) {
+    if (!cell) return;
+    cell.dataset.weight = 0;
+    cell.textContent = ''; 
+    cell.classList.add('end');
+    cell.style.color = '';
+    cell.style.fontWeight = '';
+  }
+
+  function clearPreviousMarkers() {
+    const prevStart = document.querySelector('.map-grid__cell.start');
+    const prevEnd = document.querySelector('.map-grid__cell.end');
+    if (prevStart) restoreCellDisplay(prevStart);
+    if (prevEnd) restoreCellDisplay(prevEnd);
+  }
+
+  function applyCoordinates(startY, startX, endY, endX) {
+    // validate bounds
+    function inBounds(y, x) {
+      return y >= 1 && y <= GRID_ROWS && x >= 1 && x <= GRID_COLS;
+    }
+    if (!inBounds(startY, startX) || !inBounds(endY, endX)) {
+      alert('Coordonnées hors limites. X: 1–' + GRID_COLS + ', Y: 1–' + GRID_ROWS);
+      return;
+    }
+
+    clearPreviousMarkers();
+
+    const startId = startY + '-' + startX;
+    const endId = endY + '-' + endX;
+
+    const startCell = document.getElementById(startId);
+    const endCell = document.getElementById(endId);
+
+
+    if (startId === endId) {
+      markAsStart(startCell);
+
+      const badge = document.createElement('div');
+      badge.textContent = ' / ARRIVÉE';
+      badge.style.fontWeight = '700';
+      badge.style.color = 'red';
+      badge.style.fontSize = '0.7rem';
+
+      const existing = startCell.querySelector('.end-badge');
+      if (existing) existing.remove();
+      badge.className = 'end-badge';
+      startCell.appendChild(badge);
+      return;
+    }
+
+    markAsStart(startCell);
+    markAsEnd(endCell);
+  }
+
+
+  const applyBtn = document.getElementById('apply-coords');
+  const resetBtn = document.getElementById('reset-coords');
+
+  // Fonction pour exécuter l'algorithme A*
+  function runPathfinding() {
+    const sx = parseInt(document.getElementById('start-x').value, 10);
+    const sy = parseInt(document.getElementById('start-y').value, 10);
+    const ex = parseInt(document.getElementById('end-x').value, 10);
+    const ey = parseInt(document.getElementById('end-y').value, 10);
+
+    // Construire la matrice pour AStar
+    const gridMatrix = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(1));
+    for (let y = 1; y <= GRID_ROWS; y++) {
+      for (let x = 1; x <= GRID_COLS; x++) {
+        const id = y + '-' + x;
+        const val = gridWeights[id];
+        if (val === undefined || val === null) {
+          gridMatrix[y-1][x-1] = val === null ? null : 1;
+        } else {
+          gridMatrix[y-1][x-1] = val;
+        }
+      }
+    }
+
+    // Placer les marqueurs start/end dans la matrice (votre algo les cherche)
+    gridMatrix[sy - 1][sx - 1] = 'start';
+    gridMatrix[ey - 1][ex - 1] = 'end';
+
+    // Appeler algo AStar compilé
+    if (window.AStar && typeof window.AStar.findPath === 'function') {
+      try {
+        const result = window.AStar.findPath(gridMatrix);
+        
+        // Effacer les anciens chemins
+        document.querySelectorAll('.map-grid__cell.path').forEach(c => c.classList.remove('path'));
+        
+        if (result && result.path && result.path.length > 0) {
+          // Colorier le chemin trouvé
+          for (const [r, c] of result.path) {
+            const cellId = (r+1) + '-' + (c+1);
+            const cell = document.getElementById(cellId);
+            if (cell) {
+              cell.classList.add('path');
+            }
+          }
+          
+          // Afficher les résultats dans l'interface
+          const resultsDiv = document.getElementById('path-results');
+          const totalCostSpan = document.getElementById('total-cost');
+          const pathLengthSpan = document.getElementById('path-length');
+          
+          if (resultsDiv && totalCostSpan && pathLengthSpan) {
+            totalCostSpan.textContent = result.cost.toFixed(1);
+            pathLengthSpan.textContent = result.path.length;
+            resultsDiv.style.display = 'block';
+          }
+        } else {
+          // Masquer les résultats si aucun chemin trouvé
+          const resultsDiv = document.getElementById('path-results');
+          if (resultsDiv) {
+            resultsDiv.style.display = 'none';
+          }
+          alert('Aucun chemin trouvé entre les points sélectionnés');
+        }
+      } catch (err) {
+        console.error('Erreur lors de l\'exécution d\'AStar:', err);
+        alert('Erreur dans le calcul du chemin');
+      }
+    } else {
+      console.error('AStar.findPath non disponible - vérifiez que le script est chargé');
+      alert('Algorithme AStar non disponible');
+    }
+  }
+
+  // Exposer runPathfinding globalement pour que le bouton Jouer puisse l'appeler
+  window.runPathfinding = runPathfinding;
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', () => {
+      const sx = parseInt(document.getElementById('start-x').value, 10);
+      const sy = parseInt(document.getElementById('start-y').value, 10);
+      const ex = parseInt(document.getElementById('end-x').value, 10);
+      const ey = parseInt(document.getElementById('end-y').value, 10);
+      
+      applyCoordinates(sy, sx, ey, ex);
+    });
+  }
+
+
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // Effacer les marqueurs et le chemin
+      document.querySelectorAll('.map-grid__cell.start, .map-grid__cell.end, .map-grid__cell.path').forEach(cell => restoreCellDisplay(cell));
+      
+      // Masquer les résultats
+      const resultsDiv = document.getElementById('path-results');
+      if (resultsDiv) {
+        resultsDiv.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+

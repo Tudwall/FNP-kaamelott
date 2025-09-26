@@ -1,0 +1,31 @@
+{
+  "name": "fnp-kaamelott",
+  "version": "1.0.0",
+  "description": "https://drive.google.com/file/d/1pW5ZOvyJCVbJVo3m1lFZEKy-07dW2jic/view?usp=sharinggit",
+  "homepage": "https://github.com/Tudwall/FNP-kaamelott#readme",
+  "bugs": {
+    "url": "https://github.com/Tudwall/FNP-kaamelott/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tudwall/FNP-kaamelott.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royaume | Kaamelott</title>
+    <link rel="stylesheet" href="./public/assets/style/main.css" />
+  </head>
+  <body>
+    <%- include('../partials/header') %>
+    <main style="display: flex; flex-direction: column; margin: auto;">
+      <div class="kingdom-ui" aria-label="Panneau de sélection des coordonnées">
+        <div class="kingdom-ui__header">
+          <h3>Coordonnées</h3>
+          <p class="kingdom-ui__hint">Choisissez la case de départ et d'arrivée (X : 1–34, Y : 1–23)</p>
+        </div>
+
+        <form class="kingdom-ui__form" onsubmit="return false;" aria-live="polite">
+          <fieldset class="kingdom-ui__block" aria-labelledby="start-legend">
+            <legend id="start-legend">Départ</legend>
+            <div class="input-row">
+              <label for="start-x">X</label>
+              <input type="number" id="start-x" name="start-x" min="1" max="34" value="19" aria-describedby="start-x-desc" />
+            </div>
+            <div class="input-row">
+              <label for="start-y">Y</label>
+              <input type="number" id="start-y" name="start-y" min="1" max="23" value="10" aria-describedby="start-y-desc" />
+            </div>
+          </fieldset>
+
+          <fieldset class="kingdom-ui__block" aria-labelledby="end-legend">
+            <legend id="end-legend">Arrivée</legend>
+            <div class="input-row">
+              <label for="end-x">X</label>
+              <input type="number" id="end-x" name="end-x" min="1" max="34" value="8" />
+            </div>
+            <div class="input-row">
+              <label for="end-y">Y</label>
+              <input type="number" id="end-y" name="end-y" min="1" max="23" value="21" />
+            </div>
+          </fieldset>
+
+          <div class="kingdom-ui__actions">
+            <button id="apply-coords" class="btn-primary" type="button">Appliquer</button>
+            <button id="reset-coords" class="btn-secondary" type="button">Réinitialiser</button>
+          </div>
+        </form>
+
+        <div class="kingdom-ui__results" id="path-results" style="display: none;">
+          <h4>Résultats du chemin</h4>
+          <div class="result-item">
+            <span class="result-label">Coût total :</span>
+            <span class="result-value" id="total-cost">-</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Cases parcourues :</span>
+            <span class="result-value" id="path-length">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="kingdom">
+        <div class="kingdom__header">
+          <h2>Le royaume</h2>
+          <div class="kingdom__axes" aria-hidden="true">
+            <span class="axis-x">Axe X →</span>
+            <span class="axis-y">Axe Y ↓</span>
+          </div>
+        </div>
+        <div class="kingdom__content">
+          <%- include('../partials/map-grid') %>
+          <img
+            src="./public/assets/img/map.png"
+            alt="Carte du royaume de Kaamelott"
+          />
+        </div>
+       
+        <div class="kingdom__action">
+          <button id="play-game" class="btn-primary">Jouer</button>
+        </div>
+      </div>
+      <div class="kingdom__places" aria-label="Points d'intérêt du royaume">
+        <h3>Points d'intérêt</h3>
+        <div id="places-list" class="places-list places-list--cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em;">Chargement…</div>
+      </div>
+
+
+    </main>
+
+    <script>
+      // Hook bouton Jouer après chargement complet de la page
+      document.addEventListener('DOMContentLoaded', () => {
+        const playBtn = document.getElementById('play-game');
+        if (playBtn && window.runPathfinding) {
+          playBtn.addEventListener('click', () => {
+            // Vérifier que des coordonnées sont définies
+            const sx = parseInt(document.getElementById('start-x').value, 10);
+            const sy = parseInt(document.getElementById('start-y').value, 10);
+            const ex = parseInt(document.getElementById('end-x').value, 10);
+            const ey = parseInt(document.getElementById('end-y').value, 10);
+            
+            if (isNaN(sx) || isNaN(sy) || isNaN(ex) || isNaN(ey)) {
+              alert('Veuillez d\'abord définir les coordonnées de départ et d\'arrivée en cliquant sur "Appliquer"');
+              return;
+            }
+            
+            // Lancer le calcul du chemin
+            window.runPathfinding();
+          });
+        } else {
+          console.error('❌ Bouton ou fonction runPathfinding introuvable');
+        }
+
+        // Render places panel if available
+        const placesList = document.getElementById('places-list');
+        if (window.places && placesList) {
+          placesList.innerHTML = '';
+          Object.entries(window.places).forEach(([id, label]) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'place-item place-card';
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.gap = '0.5em';
+            wrapper.style.border = '1px solid #ccc';
+            wrapper.style.borderRadius = '8px';
+            wrapper.style.padding = '1em';
+            wrapper.style.background = '#f9f9f9';
+
+            const title = document.createElement('div');
+            title.className = 'place-title';
+            title.style.fontWeight = 'bold';
+            title.style.fontSize = '1.1em';
+            title.textContent = `${label} (${id})`;
+            wrapper.appendChild(title);
+
+            const [y, x] = id.split('-').map(n => parseInt(n, 10));
+            const btnRow = document.createElement('div');
+            btnRow.style.display = 'flex';
+            btnRow.style.gap = '0.5em';
+
+            const setStartBtn = document.createElement('button');
+            setStartBtn.type = 'button';
+            setStartBtn.className = 'btn-small';
+            setStartBtn.textContent = 'Définir départ';
+            setStartBtn.style.flex = '1';
+            setStartBtn.addEventListener('click', () => {
+              document.getElementById('start-x').value = x;
+              document.getElementById('start-y').value = y;
+              const applyBtn = document.getElementById('apply-coords');
+              if (applyBtn) applyBtn.click();
+            });
+
+            const setEndBtn = document.createElement('button');
+            setEndBtn.type = 'button';
+            setEndBtn.className = 'btn-small btn-secondary';
+            setEndBtn.textContent = 'Définir arrivée';
+            setEndBtn.style.flex = '1';
+            setEndBtn.addEventListener('click', () => {
+              document.getElementById('end-x').value = x;
+              document.getElementById('end-y').value = y;
+              const applyBtn = document.getElementById('apply-coords');
+              if (applyBtn) applyBtn.click();
+            });
+
+            btnRow.appendChild(setStartBtn);
+            btnRow.appendChild(setEndBtn);
+            wrapper.appendChild(btnRow);
+            placesList.appendChild(wrapper);
+          });
+        }
+      });
+    </script>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>
